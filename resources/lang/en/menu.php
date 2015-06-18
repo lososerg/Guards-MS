@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'home' => 'Home',
+    'all_cases' => 'Cases',
+    'my_department_cases' => 'My Department Cases',
+    'guards' => 'Guards',
+    'admin_cases' => 'Admin Cases',
+    'open_case' => 'Open Case',
+    'my_cases' => 'My Cases',
+    'archive' => 'Archive',
+    'logout' => 'Logout',
+    'settings' => 'Settings',
+    'helpdesk' => 'Help Desk',
+    'search' => 'Search for Perpetrator',
+    'stats' => 'Stats',
+    'added_on' => 'Added on',
+    'author' => 'Author',
+    'opened' => 'Opened',
+    'updated' => 'Updated',
+    'case' => 'Case',
+    'human' => 'Human',
+    'magmar' => 'Magmar',
+    'human_structure' => 'Human Guards Structure',
+    'magmar_structure' => 'Magmar Guards Structure',
+];

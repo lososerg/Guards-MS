@@ -1,0 +1,1 @@
+Someone (presumably you) has requested your password to be reset for your Guards MS account. Please use the following link to reset your password: {{ url('password/reset/'.$token) }} If you didn't request your password to be reset, please ignore this email, and no change will be made.
