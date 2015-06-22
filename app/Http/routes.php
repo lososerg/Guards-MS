@@ -12,18 +12,18 @@
 */
 
 Route::get('warofdragons', 'WelcomeController@index');
-Route::get('/', function() {
-	return view('main');
+Route::get('/', function () {
+    return view('main');
 });
-Route::get('/noaccessgranted', function() {
-	return 'Contact your head guard/admin to switch on your account!';
+Route::get('/noaccessgranted', function () {
+    return 'Contact your head guard/admin to switch on your account!';
 });
 Route::get('home', ['middleware' => 'access', 'uses' => 'HomeController@index']);
 Route::get('cases', ['middleware' => 'access', 'uses' => 'CasesController@index']);
 Route::get('case/create', ['middleware' => 'access', 'uses' => 'CasesController@create']);
 Route::get('cases/closed', ['middleware' => 'access', 'uses' => 'CasesController@loadClosedCases']);
-Route::get('case/{id}', ['middleware' => 'access', 'uses' =>'CasesController@load']);
-Route::post('case/update/{id}', ['middleware' => 'access', 'uses' =>'CasesController@update']);
+Route::get('case/{id}', ['middleware' => 'access', 'uses' => 'CasesController@load']);
+Route::post('case/update/{id}', ['middleware' => 'access', 'uses' => 'CasesController@update']);
 Route::post('cases', ['middleware' => 'access', 'uses' => 'CasesController@store']);
 Route::get('users', ['middleware' => 'access', 'uses' => 'UserController@index']);
 Route::get('user/{id}', ['middleware' => 'access', 'uses' => 'UserController@show']);
@@ -51,10 +51,14 @@ Route::post('penalty/store', ['middleware' => 'access', 'uses' => 'PenaltyContro
 Route::post('penalty/update', ['middleware' => 'access', 'uses' => 'PenaltyController@update']);
 Route::post('perpetrator/destroy/{id}', ['middleware' => 'access', 'uses' => 'PerpetratorController@destroy']);
 Route::get('perpetrator/edit/{id}', ['middleware' => 'access', 'uses' => 'PerpetratorController@edit']);
-
-
+Route::get('super/test', ['middleware' => 'access', 'uses' => 'PenaltyController@calculatePaidPenalties']);
+Route::get('comment/destroy/{id}', ['middleware' => 'access', 'uses' => 'CommentController@destroy']);
+Route::get('comment/edit/{id}', ['middleware' => 'access', 'uses' => 'CommentController@edit']);
+Route::post('comment/update/', ['middleware' => 'access', 'uses' => 'CommentController@update']);
+Route::get('description/edit/{id}', ['middleware' => 'access', 'uses' => 'CasesController@editDescription']);
+Route::post('description/update', ['middleware' => 'access', 'uses' => 'CasesController@updateDescription']);
 
 Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController'
+    'auth' => 'Auth\AuthController',
+    'password' => 'Auth\PasswordController'
 ]);

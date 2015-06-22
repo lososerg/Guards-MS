@@ -8,6 +8,15 @@
 <script src="/parser_rules/advanced_and_extended.js"></script>
 <script>
 
+  function editDescription(id)
+  {
+    window.open("/description/edit/" + id,"mywindow4","menubar=no,resizable=yes,location=no,width=900,height=600");
+  }
+  function editComment(id)
+  {
+    window.open("/comment/edit/" + id,"mywindow3","menubar=no,resizable=yes,location=no,width=900,height=600");
+  }
+
   function destroy(id)
   {
     window.open("/perpetrator/edit/" + id,"mywindow2","menubar=no,resizable=no,location=no,width=300,height=300");
@@ -282,9 +291,6 @@ function addInput(divName, type){
                 <div class="form-group">
                 <label for="perpetrators[1][]" class="col-sm-2 control-label">{{ trans('tables.perpetrator') }}</label>
                   <div class='col-sm-10'> <input class='form-control' name='perpetrators[1][]' type='text'></div>
-                  {{--<div class="col-sm-10">
-                  {!! Form::text('perpetrators[1][]', null, ['class' => 'form-control']) !!}
-                </div>--}}
               </div>
             </div>
           <div class="form-group">
@@ -309,18 +315,10 @@ function addInput(divName, type){
             </div>
           </div>
           
-               <!-- two endifs were here-->
+
               @if ((isset($case->fine) and !empty($case->fine)) and (isset($case->currency) and !empty($case->currency)))
               @else
-              <!--<div class="form-group">
-                <label for="currency" class="col-sm-2 control-label">{{ trans('tables.currency') }}</label>
-                <div class="col-sm-2">
-                  {!! Form::select('currency', [
-                        1 => trans('tables.coins'),
-                        2 => trans('tables.diamonds'),
-                      ], $case->currency, ['class' => 'form-control']) !!}
-                </div>
-              </div> -->
+
               @endif
           @if ((isset($case->fine) and !empty($case->fine)) and (isset($case->currency) and !empty($case->currency)))
               <div class="form-group">
@@ -364,7 +362,12 @@ function openwindow()
                 <label for="status" class="col-sm-2 control-label">{{ trans('tables.description') }}</label>
                 <div class="col-sm-10">
                   @if (!empty($case->description) and isset($case->description))
-                  <div class="form-control-static">{!! $case->description !!}</div>
+                  <div class="form-control-static"><?= $case->description ?></div>
+                  @if (($case->created_by_id === Auth::user()->id) or
+                                     ($case->owner_id === Auth::user()->id) or
+                                     (Auth::user()->admin))
+                                      <a href="javascript: editDescription({{ $case->id }});">[{{ trans('actions.edit_description') }}]</a>
+                                    @endif
                   @else 
                   {!! Form::textarea('description', $case->description, ['class' => 'form-control']) !!}
                   @endif

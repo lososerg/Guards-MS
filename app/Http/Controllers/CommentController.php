@@ -76,7 +76,9 @@ class CommentController extends Controller
      */
     public function edit($id)
     {
-        //
+        $comment = Comment::find($id);
+
+        return view('comments.edit')->with(['comment' => $comment]);
     }
 
     /**
@@ -85,9 +87,21 @@ class CommentController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request)
     {
-        //
+        $this->validate($request, ['comment' => 'required|max:10000']);
+        $input = $request->all();
+        $comment = Comment::find($input['id']);
+
+        $comment->text = $input['comment'];
+        //$comment->author_id = Auth::user()->id;
+        $comment->save();
+
+        $case = Cases::find($comment->case_id)->touch();
+
+        Log::info(Auth::user()->name . '(' . Auth::user()->server . ') edited a comment #' . $comment->id . ' at case #' . $comment->case_id);
+
+        return '<script>window.opener.location.reload(false); this.close();</script>';
     }
 
     /**
@@ -98,7 +112,20 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comment = Comment::find($id);
+        if (isset($comment)) {
+            if (!empty($comment)) {
+                if (Auth::user()->id === $comment->author_id) {
+                    $comment->deleted_at = date("Y-m-d H:i:s", time());
+                    $comment->save();
+                    Log::info(Auth::user()->name . '(' . Auth::user()->server . ') deleted comment number ' . $comment->id);
+                } else {
+                    // Do nothing
+                }
+            }
+        }
+
+        return redirect()->back();
     }
 
 }

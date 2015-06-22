@@ -225,40 +225,6 @@ class CasesController extends Controller
                 }
             }
         }
-        /*foreach ($perpetrators as $key => $value) {
-             $i = 0;
-             //dd($value);
-             foreach ($value as $v) {
-               if (isset($v) and !empty($v)) {
-                 //dd($value);
-                 if (Auth::user()->admin == 2) {
-                 //dd($perpetrators);
-                   $a = array_filter(array_map('trim', explode("\n", $string)), 'strlen');
-                   dd($a);
-                 }
-                 $perp = new Perpetrator;
-                 $perp->case_id = $case->id;
-                 $perp->name = $v;
-                 if ($key == 1) {
-                   $perp->type = 1;
-                 } elseif ($key == 2) {
-                   $perp->type = 2;
-                 } elseif ($key == 3) {
-                   $perp->type = 3;
-                 } elseif ($key == 4) {
-                   $perp->type = 4;
-                 } elseif ($key == 5) {
-                   $perp->type = 5;
-                 } else {
-                   $perp->type = 0;
-                 }
-                 $perp->server = Auth::user()->server;
-                 $perp->race = Auth::user()->race;
-                 $perp->save();
-               }
-             }
-           } */
-
 
         Log::info(Auth::user()->name . '(' . Auth::user()->server . ')' . ' created a new case.  Number ' . $case->id);
 
@@ -404,11 +370,6 @@ class CasesController extends Controller
 
     }
 
-    public function filterBy()
-    {
-        // TODO: Filter from pages by criterias
-    }
-
     public function casesForAdmins()
     {
 
@@ -504,13 +465,11 @@ class CasesController extends Controller
         $perpetrators = $input['perpetrators'];
 
         foreach ($perpetrators as $key => $value) {
-            //$i = 0;
-            //dd($value);
 
             foreach ($value as $v) {
                 if (isset($v) and !empty($v)) {
                     $try_trim = array_filter(array_map('trim', explode(",", $v)), 'strlen');
-                    //dd($try_trim);
+
                     if (count($try_trim) > 1) {
 
                         foreach ($try_trim as $v) {
@@ -1020,4 +979,25 @@ class CasesController extends Controller
         return $fine_amount;
 
     }
+
+    public function updateDescription(Request $request) {
+
+        $this->validate($request, ['description' => 'max:20000']);
+        $input = $request->all();
+        $case = Cases::find($input['id']);
+        $case->description = $input['description'];
+        $case->save();
+        Log::info(Auth::user()->name . '(' . Auth::user()->server . ') updated description at case #' . $case->id);
+
+        return '<script>window.opener.location.reload(false); this.close();</script>';
+
+    }
+
+    public function editDescription($id) {
+
+        $case = Cases::find($id);
+
+        return view('cases.edit_description')->with(['case' => $case]);
+    }
+
 }

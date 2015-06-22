@@ -13,4 +13,7 @@ return [
     'add_hacker' => 'Add hacker',
     'add_cheater' => 'Add cheater',
     'add_penalty' => 'Add penalty',
+    'delete_comment' => 'Delete Comment',
+    'edit_comment' => 'Edit Comment',
+    'edit_description' => 'Edit Description',
 ];

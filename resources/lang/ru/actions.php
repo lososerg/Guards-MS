@@ -12,4 +12,7 @@ return [
     'add_hacker' => 'Добавить взломщика',
     'add_cheater' => 'Добавить мошенника',
     'add_penalty' => 'Добавить наказание',
+    'delete_comment' => 'Удалить',
+    'edit_comment' => 'Редактировать',
+    'edit_description' => 'Редактировать описание',
 ];

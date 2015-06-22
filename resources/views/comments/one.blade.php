@@ -6,8 +6,6 @@
         <div class="row">
           <label for="name" class="col-sm-2 control-label">{{ trans('menu.author') }}</label>
             <div class="col-sm-10">
-              
-              
               @if ($user->race == 'h')
               <img src='http://warofdragons.com/images/data/clans/strazhum3.gif'/>
               @elseif ($user->race == 'm')
@@ -34,7 +32,9 @@
               {!! $comment->text !!}
             </div>
         </div>
-        
+        @if (Auth::user()->id == $user->id)
+          <div style="text-align: right;"><a href="javascript: editComment({{ $comment->id }});">[{{ trans('actions.edit_comment') }}]</a> <a href="/comment/destroy/{{ $comment->id }}">[{{ trans('actions.delete_comment') }}]</a></div>
+        @endif
 		  </div>
 		</div>
   </div>
