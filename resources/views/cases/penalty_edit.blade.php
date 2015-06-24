@@ -24,15 +24,16 @@
   <label for="type" class="col-sm-2 control-label">{{ trans('tables.currency') }}</label>
   <div class="col-sm-2">
     {!! Form::select('type', [
-                        1 => trans('types.captivity'),
                         2 => trans('types.poverty'),
-                        3 => trans('types.rejection')
+                        1 => trans('types.captivity'),
+                        3 => trans('types.rejection'),
+                        4 => trans('types.weakness')
                       ], $penalty->type, ['class' => 'form-control']) !!}
   </div>
 </div>  
   
 <div class="form-group">
-  <label for="currency" class="col-sm-2 control-label">{{ trans('tables.currency') }}</label>
+  <label for="currency" class="col-sm-2 control-lab el">{{ trans('tables.currency') }}</label>
   <div class="col-sm-2">
     {!! Form::select('currency', [
                         1 => trans('tables.coins'),

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Editing penalty</title>
+	<title>Adding penalty</title>
 
 	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
 
@@ -24,9 +24,10 @@
   <label for="type" class="col-sm-2 control-label">Curse Type</label>
   <div class="col-sm-2">
     {!! Form::select('type', [
+                       2 => trans('types.poverty'),
                        1 => trans('types.captivity'),
-                        2 => trans('types.poverty'),
-                        3 => trans('types.rejection')
+                       3 => trans('types.rejection'),
+                       4 => trans('types.weakness')
                       ], null, ['class' => 'form-control']) !!}
   </div>
 </div>  

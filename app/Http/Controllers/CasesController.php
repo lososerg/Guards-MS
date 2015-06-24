@@ -132,7 +132,7 @@ class CasesController extends Controller
     public function store(Request $request)
     {
 
-        $this->validate($request, ['description' => 'max:20000']);
+        $this->validate($request, ['description' => 'max:40000']);
         $case = new Cases;
         $input = $request->all();
 
@@ -430,7 +430,7 @@ class CasesController extends Controller
     public function update(Request $request)
     {
 
-        $this->validate($request, ['description' => 'max:20000']);
+        $this->validate($request, ['description' => 'max:40000']);
         $input = $request->all();
         $case = Cases::find($input['id']);
         $case->type = $input['type'];
@@ -982,7 +982,7 @@ class CasesController extends Controller
 
     public function updateDescription(Request $request) {
 
-        $this->validate($request, ['description' => 'max:20000']);
+        $this->validate($request, ['description' => 'max:40000']);
         $input = $request->all();
         $case = Cases::find($input['id']);
         $case->description = $input['description'];

@@ -42,7 +42,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, ['comment' => 'required|max:10000']);
+        $this->validate($request, ['comment' => 'required|max:30000']);
         $comment = new Comment;
         $input = $request->all();
         $comment->case_id = $input['case_id'];
@@ -89,7 +89,7 @@ class CommentController extends Controller
      */
     public function update(Request $request)
     {
-        $this->validate($request, ['comment' => 'required|max:10000']);
+        $this->validate($request, ['comment' => 'required|max:30000']);
         $input = $request->all();
         $comment = Comment::find($input['id']);
 

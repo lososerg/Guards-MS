@@ -15,4 +15,5 @@ return [
     'rejection' => 'Curse of Rejection',
     'captivity' => 'Curse of Captivity',
     'poverty' => 'Curse of Poverty',
+    'weakness' => 'Curse of Weakness',
 ];

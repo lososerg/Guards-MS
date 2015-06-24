@@ -10,11 +10,11 @@
 
   function editDescription(id)
   {
-    window.open("/description/edit/" + id,"mywindow4","menubar=no,resizable=yes,location=no,width=900,height=600");
+    window.open("/description/edit/" + id,"mywindow4","menubar=no,resizable=no,location=no,width=900,height=544");
   }
   function editComment(id)
   {
-    window.open("/comment/edit/" + id,"mywindow3","menubar=no,resizable=yes,location=no,width=900,height=600");
+    window.open("/comment/edit/" + id,"mywindow3","menubar=no,resizable=no,location=no,width=900,height=544");
   }
 
   function destroy(id)
