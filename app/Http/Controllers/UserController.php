@@ -1,11 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\User;
 use Auth;
 use Log;
 use Request;
-use App\User;
 
 class UserController extends Controller
 {
@@ -28,7 +27,6 @@ class UserController extends Controller
         } elseif (Auth::user()->helpdesk) {
 
             $all = User::where('server', '=', Auth::user()->server)
-                //->where('race', '=', Auth::user()->race)
                 ->get();
 
         } else {
@@ -48,11 +46,7 @@ class UserController extends Controller
         return $all_users;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
     public function index()
     {
         $users = User::all();
@@ -64,18 +58,18 @@ class UserController extends Controller
     {
         if (Auth::guest()) {
             return redirect('auth/login');
-        } elseif (Auth::user()->admin == 1) {
+        } elseif (Auth::user()->admin === 1) {
             $users = User::where('server', '=', Auth::user()->server)
                 ->where('race', '=', Auth::user()->race)
                 ->where('department_id', '<', 5)
                 ->where('admin', '<', 2)
                 ->get();
-        } elseif (Auth::user()->admin == 2) {
+        } elseif (Auth::user()->admin === 2) {
             $users = User::where('server', '=', Auth::user()->server)
                 ->where('department_id', '<', 5)
                 ->where('admin', '<', 2)
                 ->get();
-        } elseif (Auth::user()->rank == 3) {
+        } elseif (Auth::user()->rank === 3) {
             $users = User::where('server', '=', Auth::user()->server)
                 ->where('race', '=', Auth::user()->race)
                 ->where('department_id', '=', Auth::user()->department_id)
@@ -108,32 +102,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
     public function show($id, $edit = false)
     {
         $user = User::find($id);
@@ -150,12 +118,7 @@ class UserController extends Controller
         return view('users.edit.one')->with(['user' => $user]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
+
     public function edit($id)
     {
         if (Auth::user()->admin) {
@@ -166,12 +129,7 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
+
     public function upgrate($id)
     {
         $user = User::find($id);
@@ -195,20 +153,9 @@ class UserController extends Controller
         return redirect('/users');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
     public function loadGuardsStructure($server, $race)
     {
-        if ($server != Auth::user()->server) {
+        if ($server !== Auth::user()->server) {
             return redirect('home');
         }
 

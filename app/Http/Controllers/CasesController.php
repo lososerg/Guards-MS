@@ -1,14 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Cases;
-use App\Perpetrator;
 use App\Penalty;
+use App\Perpetrator;
 use Auth;
-use Log;
 use DB;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Log;
 
 class CasesController extends Controller
 {
@@ -20,7 +19,7 @@ class CasesController extends Controller
     public function index()
     {
 
-        if (5 == Auth::user()->department_id) { // Helpdesk department
+        if (5 === Auth::user()->department_id) { // Helpdesk department
 
             $cases = DB::table('cases')
                 ->where('server', '=', Auth::user()->server)
@@ -60,7 +59,7 @@ class CasesController extends Controller
     public function loadClosedCases()
     {
 
-        if (5 == Auth::user()->department_id) { // Helpdesk department
+        if (5 === Auth::user()->department_id) { // Helpdesk department
 
             $cases = DB::table('cases')
                 ->where('server', '=', Auth::user()->server)
@@ -161,18 +160,12 @@ class CasesController extends Controller
 
         $case->save();
         $perpetrators = $input['perpetrators'];
-        if (Auth::user()->admin == 2) {
-            //dd($perpetrators);
-        }
 
         foreach ($perpetrators as $key => $value) {
-            //$i = 0;
-            //dd($value);
 
             foreach ($value as $v) {
                 if (isset($v) and !empty($v)) {
                     $try_trim = array_filter(array_map('trim', explode(",", $v)), 'strlen');
-                    //dd($try_trim);
                     if (count($try_trim) > 1) {
 
                         foreach ($try_trim as $v) {
@@ -259,7 +252,7 @@ class CasesController extends Controller
     public function showMyDepartmentCases()
     {
 
-        if (Auth::user()->department_id == 5) {
+        if (Auth::user()->department_id === 5) {
 
             $cases = DB::table('cases')
                 ->where('server', '=', Auth::user()->server)
@@ -326,7 +319,7 @@ class CasesController extends Controller
 
         } else {
 
-            if (Auth::user()->department_id == 5) {
+            if (Auth::user()->department_id === 5) {
 
                 $cases = Cases::where('department_id', '=', Auth::user()->department_id)
                     ->where('server', '=', Auth::user()->server)
@@ -354,7 +347,7 @@ class CasesController extends Controller
     public function delete($id)
     {
 
-        if ((Auth::user()->admin == 2) or (Auth::user()->admin == 1)) {
+        if ((Auth::user()->admin === 2) or (Auth::user()->admin === 1)) {
             $case = Cases::find($id);
             //TODO: Delete perpetrators in case before case deletion.
             $case->deleted_at = date("Y-m-d H:i:s", time());
@@ -532,9 +525,9 @@ class CasesController extends Controller
     public static function countCases($user_id, $status)
     {
 
-        if (Auth::user()->rank == 3) {
+        if (Auth::user()->rank === 3) {
 
-            if ($status == 1) { // New cases
+            if ($status === 1) { // New cases
 
                 $cases = Cases::where('status', '=', 1)
                     ->where('owner_id', '=', $user_id)
@@ -542,7 +535,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 2) { // In progress
+            } elseif ($status === 2) { // In progress
 
                 $cases = Cases::where('status', '=', 2)
                     ->where('owner_id', '=', $user_id)
@@ -550,7 +543,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 3) { // Closed
+            } elseif ($status === 3) { // Closed
 
                 $cases = Cases::where('status', '=', 3)
                     ->where('owner_id', '=', $user_id)
@@ -562,21 +555,21 @@ class CasesController extends Controller
 
         } else {
 
-            if ($status == 1) { // New cases
+            if ($status === 1) { // New cases
 
                 $cases = Cases::where('status', '=', 1)
                     ->where('owner_id', '=', $user_id)
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 2) { // In progress
+            } elseif ($status === 2) { // In progress
 
                 $cases = Cases::where('status', '=', 2)
                     ->where('owner_id', '=', $user_id)
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 3) { // Closed
+            } elseif ($status === 3) { // Closed
 
                 $cases = Cases::where('status', '=', 3)
                     ->where('owner_id', '=', $user_id)
@@ -600,23 +593,23 @@ class CasesController extends Controller
     public static function countTotalCases($status)
     {
 
-        if (Auth::user()->admin == 2) {
+        if (Auth::user()->admin === 2) {
 
-            if ($status == 1) { // New cases
+            if ($status === 1) { // New cases
 
                 $cases = Cases::where('status', '=', 1)
                     ->where('server', '=', Auth::user()->server)
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 2) { // In progress
+            } elseif ($status === 2) { // In progress
 
                 $cases = Cases::where('status', '=', 2)
                     ->where('server', '=', Auth::user()->server)
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 3) { // Closed
+            } elseif ($status === 3) { // Closed
 
                 $cases = Cases::where('status', '=', 3)
                     ->where('server', '=', Auth::user()->server)
@@ -625,9 +618,9 @@ class CasesController extends Controller
 
             }
 
-        } elseif (Auth::user()->admin == 1) {
+        } elseif (Auth::user()->admin === 1) {
 
-            if ($status == 1) { // New cases
+            if ($status === 1) { // New cases
 
                 $cases = Cases::where('status', '=', 1)
                     ->where('server', '=', Auth::user()->server)
@@ -635,7 +628,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 2) { // In progress
+            } elseif ($status === 2) { // In progress
 
                 $cases = Cases::where('status', '=', 2)
                     ->where('server', '=', Auth::user()->server)
@@ -643,7 +636,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 3) { // Closed
+            } elseif ($status === 3) { // Closed
 
                 $cases = Cases::where('status', '=', 3)
                     ->where('server', '=', Auth::user()->server)
@@ -653,9 +646,9 @@ class CasesController extends Controller
 
             }
 
-        } elseif (Auth::user()->rank == 3) {
+        } elseif (Auth::user()->rank === 3) {
 
-            if ($status == 1) { // New cases
+            if ($status === 1) { // New cases
 
                 $cases = Cases::where('status', '=', 1)
                     ->where('server', '=', Auth::user()->server)
@@ -664,7 +657,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 2) { // In progress
+            } elseif ($status === 2) { // In progress
 
                 $cases = Cases::where('status', '=', 2)
                     ->where('server', '=', Auth::user()->server)
@@ -673,7 +666,7 @@ class CasesController extends Controller
                     ->where('deleted_at', '=', '0000-00-00 00:00:00')
                     ->get();
 
-            } elseif ($status == 3) { // Closed
+            } elseif ($status === 3) { // Closed
 
                 $cases = Cases::where('status', '=', 3)
                     ->where('server', '=', Auth::user()->server)
@@ -703,7 +696,7 @@ class CasesController extends Controller
     public static function countCreatedCases($user_id)
     {
 
-        if (Auth::user()->rank == 3) {
+        if (Auth::user()->rank === 3) {
 
             $cases = Cases::where('created_by_id', '=', $user_id)
                 ->where('department_id', '=', Auth::user()->department_id)
@@ -730,20 +723,20 @@ class CasesController extends Controller
     public static function countTotalCreatedCases()
     {
 
-        if (Auth::user()->admin == 2) {
+        if (Auth::user()->admin === 2) {
 
             $cases = Cases::where('server', '=', Auth::user()->server)
                 ->where('deleted_at', '=', '0000-00-00 00:00:00')
                 ->get();
 
-        } elseif (Auth::user()->admin == 1) {
+        } elseif (Auth::user()->admin === 1) {
 
             $cases = Cases::where('server', '=', Auth::user()->server)
                 ->where('deleted_at', '=', '0000-00-00 00:00:00')
                 ->where('race', '=', Auth::user()->race)
                 ->get();
 
-        } elseif (Auth::user()->rank == 3) {
+        } elseif (Auth::user()->rank === 3) {
 
             $cases = Cases::where('server', '=', Auth::user()->server)
                 ->where('department_id', '=', Auth::user()->department_id)
@@ -770,7 +763,7 @@ class CasesController extends Controller
     public function showUserCasesNew($id)
     {
 
-        if (Auth::user()->rank == 3) {
+        if (Auth::user()->rank === 3) {
 
             $cases = Cases::where('owner_id', '=', $id)
                 ->where('status', '=', 1)
@@ -801,7 +794,7 @@ class CasesController extends Controller
     public function showUserCasesInProgress($id)
     {
 
-        if (Auth::user()->rank == 3) {
+        if (Auth::user()->rank === 3) {
 
             $cases = Cases::where('owner_id', '=', $id)
                 ->where('department_id', '=', Auth::user()->department_id)
@@ -832,7 +825,7 @@ class CasesController extends Controller
     public function showUserCasesClosed($id)
     {
 
-        if (Auth::user()->rank == 3) {
+        if (Auth::user()->rank === 3) {
 
             $cases = Cases::where('owner_id', '=', $id)
                 ->where('status', '=', 3)
@@ -919,7 +912,6 @@ class CasesController extends Controller
     public static function calculateGivenFines()
     {
 
-
         $cases = Penalty::where('server', '=', Auth::user()->server)
             ->get();
 
@@ -965,11 +957,11 @@ class CasesController extends Controller
 
         foreach ($cases as $case) {
 
-            if (($case->currency == 1) and ($case->fine)) {
+            if (($case->currency === 1) and ($case->fine)) {
 
                 $fine_amount[0] += $case->fine;
 
-            } elseif (($case->currency == 2) and ($case->fine)) {
+            } elseif (($case->currency === 2) and ($case->fine)) {
 
                 $fine_amount[1] += $case->fine;
             } else {
@@ -981,7 +973,8 @@ class CasesController extends Controller
 
     }
 
-    public function updateDescription(Request $request) {
+    public function updateDescription(Request $request)
+    {
 
         $this->validate($request, ['description' => 'max:40000']);
         $input = $request->all();
@@ -994,14 +987,16 @@ class CasesController extends Controller
 
     }
 
-    public function editDescription($id) {
+    public function editDescription($id)
+    {
 
         $case = Cases::find($id);
 
         return view('cases.edit_description')->with(['case' => $case]);
     }
 
-    public function showStatReports() {
+    public function showStatReports()
+    {
         if (!Auth::user()->admin === 2) {
             return "Access denied";
         }

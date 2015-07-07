@@ -51,7 +51,6 @@ Route::post('penalty/store', ['middleware' => 'access', 'uses' => 'PenaltyContro
 Route::post('penalty/update', ['middleware' => 'access', 'uses' => 'PenaltyController@update']);
 Route::post('perpetrator/destroy/{id}', ['middleware' => 'access', 'uses' => 'PerpetratorController@destroy']);
 Route::get('perpetrator/edit/{id}', ['middleware' => 'access', 'uses' => 'PerpetratorController@edit']);
-Route::get('super/test', ['middleware' => 'access', 'uses' => 'PenaltyController@calculatePaidPenalties']);
 Route::get('comment/destroy/{id}', ['middleware' => 'access', 'uses' => 'CommentController@destroy']);
 Route::get('comment/edit/{id}', ['middleware' => 'access', 'uses' => 'CommentController@edit']);
 Route::post('comment/update/', ['middleware' => 'access', 'uses' => 'CommentController@update']);
