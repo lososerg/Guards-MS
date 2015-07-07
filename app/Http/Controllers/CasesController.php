@@ -356,6 +356,7 @@ class CasesController extends Controller
 
         if ((Auth::user()->admin == 2) or (Auth::user()->admin == 1)) {
             $case = Cases::find($id);
+            //TODO: Delete perpetrators in case before case deletion.
             $case->deleted_at = date("Y-m-d H:i:s", time());
             $case->save();
             Log::info(Auth::user()->name . '(' . Auth::user()->server . ')' . 'deleted case number ' . $case->id);
@@ -1000,4 +1001,12 @@ class CasesController extends Controller
         return view('cases.edit_description')->with(['case' => $case]);
     }
 
+    public function showStatReports() {
+        if (!Auth::user()->admin === 2) {
+            return "Access denied";
+        }
+        $reports = DB::table('stats_log')->where('server', '=', Auth::user()->server)->orderBy('id', 'desc')->get();
+
+        return view('stats_reports')->with(['reports' => $reports]);
+    }
 }

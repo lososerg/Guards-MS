@@ -1,11 +1,16 @@
 @extends('app')
 
 @section('content')
-<!-- wysihtml core javascript with default toolbar functions --> 
-<script src="/dist/wysihtml5x-toolbar.js"></script>
-
-<!-- rules defining tags, attributes and classes that are allowed -->
-<script src="/parser_rules/advanced_and_extended.js"></script>
+<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+  <script type="text/javascript">
+          tinymce.init({
+              plugins: "image link autolink textcolor",
+                              default_link_target: "_blank",
+                              link_assume_external_targets: true,
+                              selector: "#mytextarea",
+                              browser_spellcheck : true
+          });
+   </script>
 <script>
 
   function editDescription(id)
@@ -408,33 +413,7 @@ function openwindow()
           <div class="form-group">
             <label for="comment" class="col-sm-2 control-label">{{ trans('tables.comment') }}</label>
               <div class="col-sm-10">
-                <div id="wysihtml-toolbar" style="display: none;">
-                    <button data-wysihtml5-command="bold" title="CTRL+B" type="button" class="btn btn-default" aria-label="Bold">
-                      <span class="glyphicon glyphicon-bold" aria-hidden="true"></span>
-                    </button>
-                    <button data-wysihtml5-command="italic" title="CTRL+I" type="button" class="btn btn-default" aria-label="Italic">
-                      <span class="glyphicon glyphicon-italic" aria-hidden="true"></span>
-                    </button>
-                    <button data-wysihtml5-command="createLink" type="button" class="btn btn-default" aria-label="Italic">
-                      <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
-                    </button>
-                    <button data-wysihtml5-command="insertUnorderedList" type="button" class="btn btn-default" aria-label="Italic">
-                      <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-                    </button>
-                    <button data-wysihtml5-action="change_view" type="button" class="btn btn-default" aria-label="Italic">
-                      <span class="glyphicon glyphicon-header" aria-hidden="true"></span>
-                    </button>
-                    <div data-wysihtml5-dialog="createLink" style="display: none;">
-                      <label>
-                        Link:
-                        <input data-wysihtml5-dialog-field="href" value="http://">
-                      </label>
-                      <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
-                    </div>
-
-                  </div>
-                
-                {!! Form::textarea('comment', null, ['class' => 'form-control', 'rows' => 3, 'id' => 'wysihtml-textarea']) !!}
+                {!! Form::textarea('comment', null, ['class' => 'form-control', 'rows' => 3, 'id' => 'mytextarea']) !!}
               </div>
           </div>
           <div class="form-group">
@@ -449,10 +428,4 @@ function openwindow()
 		</div>
   </div>
 </div>
-<script>
-var editor = new wysihtml5.Editor("wysihtml-textarea", { // id of textarea element
-  toolbar:      "wysihtml-toolbar", // id of toolbar element
-  parserRules:  wysihtml5ParserRules // defined in parser rules set 
-});
-</script>
 @endsection

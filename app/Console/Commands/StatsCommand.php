@@ -1,129 +1,43 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Console\Commands;
 
-use App\Http\Requests;
-use App\Penalty;
 use App\Perpetrator;
-use Auth;
-use Illuminate\Http\Request;
-use Log;
+use DB;
+use Illuminate\Console\Command;
 
-class PenaltyController extends Controller
+class StatsCommand extends Command
 {
 
     /**
-     * Display a listing of the resource.
+     * The console command name.
      *
-     * @return Response
+     * @var string
      */
-    public function index()
+    protected $name = 'stats:collect';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Launches stats collection script.';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        //
+        parent::__construct();
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Execute the console command.
      *
-     * @return Response
+     * @return mixed
      */
-    public function create($id)
+    public function fire()
     {
-        //
-
-        return view('cases.penalty')->with(['id' => $id]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        $penalty = new Penalty;
-        $input = $request->all();
-        $perpetrator = Perpetrator::find($input['perpetrator_id']);
-        $penalty->type = $input['type'];
-        $penalty->currency = $input['currency'];
-        $penalty->fine = $input['fine'];
-        $penalty->perpetrator_id = $perpetrator->id;
-        $penalty->issued_by_id = Auth::user()->id;
-        $penalty->server = Auth::user()->server;
-        $penalty->case_id = $perpetrator->case_id;
-        $penalty->save();
-
-        return '<script>window.opener.location.reload(false); this.close();</script>';
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        $penalty = Penalty::find($id);
-
-        return view('cases.penalty_edit')->with(['penalty' => $penalty]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-        $input = $request->all();
-        $penalty = Penalty::find($input['penalty_id']);
-        $penalty->type = $input['type'];
-        $penalty->currency = $input['currency'];
-        $penalty->fine = $input['fine'];
-        $penalty->issued_by_id = Auth::user()->id;
-        $penalty->server = Auth::user()->server;
-        $penalty->save();
-
-        Log::info(Auth::user()->name . '(' . Auth::user()->server . ')  changed penalty (ID=' . $penalty->id . ').  Type: ' . $penalty->type . ', Currency: ' . $penalty->currency . ' Amount: ' . $penalty->fine);
-
-        return '<script>window.opener.location.reload(false); this.close();</script>';
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        $perpetrator = Perpetrator::find($id);
-        $perpetrator->deleted_at = date("Y-m-d H:i:s", time());
-        $perpetrator->save();
-
-        Log::info(Auth::user()->name . '(' . Auth::user()->server . ')' . 'deleted perpetrator number ' . $perpetrator->id);
-
-        return redirect()->back();
-    }
-
-    public function calculatePaidPenalties()
-    {
-
-        if (2 !== Auth::user()->admin) {
-            return 'Access denied';
-        }
 
         $servers = [
             'com',
@@ -131,6 +45,7 @@ class PenaltyController extends Controller
             'pl',
             'w1',
             'w2',
+            '3k',
         ];
 
         $handled_perpetrators_count = [
@@ -139,6 +54,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $have_penalty = [
             'com' => 0,
@@ -146,6 +62,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $free = [
             'com' => 0,
@@ -153,6 +70,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $had_penalty = [
             'com' => 0,
@@ -160,6 +78,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $gold_paid = [
             'com' => 0,
@@ -167,6 +86,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $failed_lookup = [];
         $users_dont_exist = [];
@@ -176,6 +96,7 @@ class PenaltyController extends Controller
             'pl' => 0,
             'w1' => 0,
             'w2' => 0,
+            '3k' => 0,
         ];
         $free_people = [];
         foreach ($servers as $server) {
@@ -187,7 +108,10 @@ class PenaltyController extends Controller
                     $not_exist = strpos($check, 'User not found!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
-                        $users_dont_exist[$server][] = $p->name;
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
+
                         continue;
                     }
                 } elseif ('de' == $server) {
@@ -195,7 +119,9 @@ class PenaltyController extends Controller
                     $not_exist = strpos($check, 'User nicht gefunden!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
-                        $users_dont_exist[$server][] = $p->name;
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
                         continue;
                     }
                 } elseif ('pl' == $server) {
@@ -203,7 +129,9 @@ class PenaltyController extends Controller
                     $not_exist = strpos($check, 'Użytkownik nie został znaleziony!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
-                        $users_dont_exist[$server][] = $p->name;
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
                         continue;
                     }
                 } elseif ('w1' == $server) {
@@ -211,7 +139,9 @@ class PenaltyController extends Controller
                     $not_exist = strpos($check, 'Пользователь не найден!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
-                        $users_dont_exist[$server][] = $p->name;
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
                         continue;
                     }
                 } elseif ('w2' == $server) {
@@ -219,7 +149,19 @@ class PenaltyController extends Controller
                     $not_exist = strpos($check, 'Пользователь не найден!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
-                        $users_dont_exist[$server][] = $p->name;
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
+                        continue;
+                    }
+                } elseif ('3k' == $server) {
+                    $check = file_get_contents('http://3k.mail.ru/user_info.php?nick=' . urlencode($p->name));
+                    $not_exist = strpos($check, 'Пользователь не найден!');
+                    if ($not_exist) {
+                        ++$failed_users_count[$server];
+                        DB::table('stats_errors')->insert(
+                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                        );
                         continue;
                     }
                 } else {
@@ -313,10 +255,26 @@ class PenaltyController extends Controller
                             } else {
                                 ++$failed_lookup[$server];
                             }
+                        } elseif ('3k' == $server) {
+                            $s = file_get_contents('http://3k.mail.ru/punishment_info.php?nick=' . urlencode($p->name));
+                            if ($s) {
+                                $try = strpos($s, 'На этого персонажа не наложены наказания!');
+                                if ($try) {
+                                    // User has no Curses
+                                    ++$free[$server];
+                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    $gold_paid[$server] += $p->penalty->fine;
+                                } else {
+                                    // User in in prison
+                                    ++$have_penalty[$server];
+                                }
+                                ++$had_penalty[$server];
+                            } else {
+                                ++$failed_lookup[$server];
+                            }
                         } else {
                             // Do nothing
                         }
-
 
                     } else {
 
@@ -326,18 +284,54 @@ class PenaltyController extends Controller
 
                 }
                 ++$handled_perpetrators_count[$server];
-                Log::info('Handled server ' . $server . ', perpetrator ' . $handled_perpetrators_count[$server]);
             }
         }
-
         //$people = implode($free_people);
-        return view('fine_payments')
-            ->with(['handled_perpetrators_count' => $handled_perpetrators_count])
-            ->with(['failed_users_count' => $failed_users_count])
-            ->with(['had_penalty' => $had_penalty])
-            ->with(['have_penalty' => $have_penalty])
-            ->with(['free' => $free])
-            ->with(['gold_paid' => $gold_paid]);
+        foreach ($servers as $s) {
+            $total_cases[$s] =  DB::table('cases')->where('server', '=', $s)->count();
+            DB::table('stats_log')->insert(
+                ['server' => $s,
+                    'date' => date("Y-m-d H:i:s", time()),
+                    'total_checked' => $handled_perpetrators_count[$s],
+                    'total_failed' => $failed_users_count[$s],
+                    'total_with_penalty' => $had_penalty[$s],
+                    'with_penalty_now' => $have_penalty[$s],
+                    'free' => $free[$s],
+                    'paid_gold' => $gold_paid[$s],
+                    'total_cases' => $total_cases[$s],
+                ]
+            );
+        }
+        $this->info('Script successfully completed execution');
+        return true;
     }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    /*protected function getArguments()
+    {
+
+          return [
+            ['example', InputArgument::REQUIRED, 'An example argument.'],
+        ];
+
+    }
+*/
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    /*protected function getOptions()
+    {
+        return [
+            ['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
+        ];
+    }
+*/
 
 }

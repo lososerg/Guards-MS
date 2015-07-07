@@ -15,7 +15,16 @@
 
 @section('content')
 <div class="container">
-  <p class="text-primary">Stats for the last <b>7 days</b>: {{ trans('status.new') }} - <b>{{ $all_new }}</b> <em>({{ $all_new_share }})</em>, {{ trans('status.in_progress') }} - <b>{{ $all_in_progress }}</b> <em>({{ $all_in_progress_share }})</em>, {{ trans('status.closed') }} - <b>{{ $all_closed }}</b> <em>({{ $all_closed_share }})</em>, Total - <b>{{ $all_total }}</b>, Created - <b>{{ $all_created }}</b>. Fines issued: @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_game.gif"> @else<img src="http://warofdragons.com/images/m_game3.gif" />@endif @if($fines_coins >= 100) {{ number_format($fines_coins/100, 0, null, "") }} @else {{ $fines_coins}}  @endif, @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_dmd.gif"> @else<img src="http://warofdragons.com/images/m_dmd.gif" />@endif {{ $fines_diamonds }}. </p>
+  <p class="text-primary">Stats for the last <b>7 days:</b></p>
+  <ul style="list-style-type: none;" class="text-primary">
+    <li>{{ trans('status.new') }} - <b>{{ $all_new }}</b> <em>({{ $all_new_share }})</em>,</li>
+    <li>{{ trans('status.in_progress') }} - <b>{{ $all_in_progress }}</b> <em>({{ $all_in_progress_share }})</em>,</li>
+    <li>{{ trans('status.closed') }} - <b>{{ $all_closed }}</b> <em>({{ $all_closed_share }})</em>,</li>
+    <li>Total - <b>{{ $all_total }}</b>,</li>
+    <li>Created - <b>{{ $all_created }}</b>.</li>
+    <li>Fines issued: @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_game.gif"> @else<img src="http://warofdragons.com/images/m_game3.gif" />@endif @if($fines_coins >= 100) {{ number_format($fines_coins/100, 0, null, "") }} @else {{ $fines_coins}}  @endif, @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_dmd.gif"> @else<img src="http://warofdragons.com/images/m_dmd.gif" />@endif {{ $fines_diamonds }}.</li>
+  </ul>
+  <p><a href="/stats/list">View daily stats</a></p>
 	<table class="table table-condensed table-hover">
     <thead>
       <tr>

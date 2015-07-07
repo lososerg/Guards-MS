@@ -57,6 +57,7 @@ Route::get('comment/edit/{id}', ['middleware' => 'access', 'uses' => 'CommentCon
 Route::post('comment/update/', ['middleware' => 'access', 'uses' => 'CommentController@update']);
 Route::get('description/edit/{id}', ['middleware' => 'access', 'uses' => 'CasesController@editDescription']);
 Route::post('description/update', ['middleware' => 'access', 'uses' => 'CasesController@updateDescription']);
+Route::get('stats/list', ['middleware' => 'access', 'uses' => 'CasesController@showStatReports']);
 
 Route::controllers([
     'auth' => 'Auth\AuthController',
