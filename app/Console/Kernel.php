@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('stats:collect')
             ->dailyAt('22:00');
-        $schedule->command('test')->everyFiveMinutes();
+        //$schedule->command('test')->everyFiveMinutes();
     }
 
 }

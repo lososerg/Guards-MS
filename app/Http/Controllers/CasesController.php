@@ -997,11 +997,25 @@ class CasesController extends Controller
 
     public function showStatReports()
     {
-        if (!Auth::user()->admin === 2) {
+        if (!Auth::user()->admin) {
             return "Access denied";
         }
         $reports = DB::table('stats_log')->where('server', '=', Auth::user()->server)->orderBy('id', 'desc')->get();
 
         return view('stats_reports')->with(['reports' => $reports]);
+    }
+
+    public function showDailyReport($id)
+    {
+        $report = DB::table('stats_log')->where('id', '=', $id)->pluck('date');
+        $base = $report;
+        $from = date("Y-m-d H:i:s", (strtotime($base) - (60 * 60)));
+        $to = date("Y-m-d H:i:s", (strtotime($base) + (60 * 60)));
+        $failed = DB::table('stats_errors')->whereBetween('date', [$from, $to])->where('server', '=', Auth::user()->server)->get();
+        $freed = DB::table('stats_free')->whereBetween('date', [$from, $to])->where('server', '=', Auth::user()->server)->get();
+
+        return view('stats_daily')
+            ->with(['failed' => $failed])
+            ->with(['freed' => $freed]);
     }
 }

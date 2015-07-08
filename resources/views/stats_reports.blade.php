@@ -17,7 +17,7 @@
   <tbody>
     @foreach($reports as $r)
     <tr>
-      <td>{{ $r->date }}</td>
+      <td><a href="/stats/daily/{{ $r->id }}">{{ $r->date }}</a></td>
       <td>{{ $r->server }}</td>
       <td>{{ $r->total_checked }}</td>
       <td>{{ $r->total_failed }}</td>

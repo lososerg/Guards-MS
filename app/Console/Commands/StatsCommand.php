@@ -98,20 +98,49 @@ class StatsCommand extends Command
             'w2' => 0,
             '3k' => 0,
         ];
-        $free_people = [];
+
         foreach ($servers as $server) {
             $perpetrators = Perpetrator::where('server', '=', $server)->where('deleted_at', '=', '0000-00-00 00:00:00')->get();
+            $failed_users = DB::table('stats_errors')->where('server', '=', $server)->get();
+            $freed_users = DB::table('stats_free')->where('server', '=', $server)->get();
             foreach ($perpetrators as $p) {
-                //Check if username is valid
+                /*
+                 * Check if user with error already exists in DB
+                 */
+                foreach ($failed_users as $failed) {
+                    if (isset($failed) and !empty($failed)) {
+                        if ($p->id === $failed->perp_id) {
+                            /*
+                             *
+                             *  Invalid username is already in our DB
+                             *  Choose another
+                             *
+                             */
+                            continue 2;
+                        }
+                    }
+                }
+                /*
+                 *
+                 * No match in our DB with invalid users
+                 * Check if username is valid
+                 *
+                 */
                 if ('com' == $server) {
                     $check = file_get_contents('http://warofdragons.com/user_info.php?nick=' . urlencode($p->name));
                     $not_exist = strpos($check, 'User not found!');
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
-
                         continue;
                     }
                 } elseif ('de' == $server) {
@@ -120,7 +149,14 @@ class StatsCommand extends Command
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
                         continue;
                     }
@@ -130,7 +166,14 @@ class StatsCommand extends Command
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
                         continue;
                     }
@@ -140,7 +183,14 @@ class StatsCommand extends Command
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
                         continue;
                     }
@@ -150,7 +200,14 @@ class StatsCommand extends Command
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
                         continue;
                     }
@@ -160,16 +217,42 @@ class StatsCommand extends Command
                     if ($not_exist) {
                         ++$failed_users_count[$server];
                         DB::table('stats_errors')->insert(
-                            ['server' => $p->server, 'perp_id' => $p->id, 'perp_name' => $p->name, 'case_id' => $p->case_id, 'race' => $p->race, 'date' => date("Y-m-d H:i:s", time())]
+                            [
+                                'server' => $p->server,
+                                'perp_id' => $p->id,
+                                'perp_name' => $p->name,
+                                'case_id' => $p->case_id,
+                                'race' => $p->race,
+                                'date' => date("Y-m-d H:i:s", time())
+                            ]
                         );
                         continue;
                     }
                 } else {
                     // Do nothing
                 }
-                // User exists, checking penalty
+
+                /*
+                 * User exists, checking penalty
+                 */
                 if ($p->penalty) {
                     if ((1 === $p->penalty->currency) && ($p->penalty->fine > 0)) {
+
+                        /*
+                         * Check if released player is already in our DB
+                         */
+
+                        foreach ($freed_users as $freed) {
+                            if (isset($freed) and !empty($freed)) {
+                                if ($p->id === $freed->perp_id) {
+                                    /*
+                                     * We already have him in DB
+                                     */
+
+                                    continue 2;
+                                }
+                            }
+                        }
                         if ('com' == $server) {
                             $s = file_get_contents('http://www.warofdragons.com/punishment_info.php?nick=' . urlencode($p->name));
                             if ($s) {
@@ -177,7 +260,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -194,7 +287,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -211,7 +314,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -228,7 +341,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -245,7 +368,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -262,7 +395,17 @@ class StatsCommand extends Command
                                 if ($try) {
                                     // User has no Curses
                                     ++$free[$server];
-                                    $free_people[$server][$p->name] = round(($p->penalty->fine / 100), 0);
+                                    DB::table('stats_free')->insert(
+                                        [
+                                            'server' => $p->server,
+                                            'perp_id' => $p->id,
+                                            'perp_name' => $p->name,
+                                            'case_id' => $p->case_id,
+                                            'race' => $p->race,
+                                            'date' => date("Y-m-d H:i:s", time()),
+                                            'gold_paid' => $p->penalty->fine,
+                                        ]
+                                    );
                                     $gold_paid[$server] += $p->penalty->fine;
                                 } else {
                                     // User in in prison
@@ -286,9 +429,9 @@ class StatsCommand extends Command
                 ++$handled_perpetrators_count[$server];
             }
         }
-        //$people = implode($free_people);
+
         foreach ($servers as $s) {
-            $total_cases[$s] =  DB::table('cases')->where('server', '=', $s)->count();
+            $total_cases[$s] = DB::table('cases')->where('server', '=', $s)->count();
             DB::table('stats_log')->insert(
                 ['server' => $s,
                     'date' => date("Y-m-d H:i:s", time()),
@@ -305,33 +448,5 @@ class StatsCommand extends Command
         $this->info('Script successfully completed execution');
         return true;
     }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    /*protected function getArguments()
-    {
-
-          return [
-            ['example', InputArgument::REQUIRED, 'An example argument.'],
-        ];
-
-    }
-*/
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    /*protected function getOptions()
-    {
-        return [
-            ['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
-        ];
-    }
-*/
 
 }

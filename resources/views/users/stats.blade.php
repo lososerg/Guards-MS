@@ -24,7 +24,7 @@
     <li>Created - <b>{{ $all_created }}</b>.</li>
     <li>Fines issued: @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_game.gif"> @else<img src="http://warofdragons.com/images/m_game3.gif" />@endif @if($fines_coins >= 100) {{ number_format($fines_coins/100, 0, null, "") }} @else {{ $fines_coins}}  @endif, @if (Auth::user()->server == '3k') <img src="http://3k.mail.ru/images/m_dmd.gif"> @else<img src="http://warofdragons.com/images/m_dmd.gif" />@endif {{ $fines_diamonds }}.</li>
   </ul>
-  <p><a href="/stats/list">View daily stats</a></p>
+  <p><a href="/stats/list">Go to <b>Daily Stats</b></a></p>
 	<table class="table table-condensed table-hover">
     <thead>
       <tr>
