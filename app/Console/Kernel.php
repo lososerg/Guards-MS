@@ -15,6 +15,9 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\Inspire',
         'App\Console\Commands\StatsCommand',
         'App\Console\Commands\TestCommand',
+        'App\Console\Commands\TelegramCommand',
+        'App\Console\Commands\AnekdotCommand',
+        'App\Console\Commands\SendAnekdotesCommand',
     ];
 
     /**
@@ -27,7 +30,10 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('stats:collect')
             ->dailyAt('22:00');
-        //$schedule->command('test')->everyFiveMinutes();
+        //$schedule->command('telegram:update')->everyFiveMinutes();
+        //$schedule->command('telegram:update')->cron('* * * * *');
+        $schedule->command('anekdot')->cron('* * * * *');
+        $schedule->command('anekdot:send')->dailyAt('07:00');
     }
 
 }
